@@ -29,7 +29,7 @@ using System.Text;
 using System.IO;
 using System.Xml;
 
-namespace BinEdi
+namespace Binedi
 {
     public class Parser
     {
@@ -63,7 +63,7 @@ namespace BinEdi
         public void Create_XML()
         {
             doc.AppendChild(doc.CreateXmlDeclaration("1.0", "utf-8", null));
-            root = doc.CreateElement("BinEditor");
+            root = doc.CreateElement("Binedi");
             xmlLoaded = true;
         }
         public void Load_XML(string path)

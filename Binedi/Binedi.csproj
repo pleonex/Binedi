@@ -8,10 +8,11 @@
     <ProjectGuid>{2EA757B4-3D54-4477-97E6-CFA19EB87A56}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BinEdi</RootNamespace>
-    <AssemblyName>BinEdi</AssemblyName>
+    <RootNamespace>Binedi</RootNamespace>
+    <AssemblyName>Binedi</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <StartupObject>Binedi.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -33,7 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>BinEdi.Program</StartupObject>
+    <StartupObject>Binedi.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

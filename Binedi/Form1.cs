@@ -28,7 +28,7 @@ using System.Windows.Forms;
 using Be.Windows.Forms;
 using System.IO;
 
-namespace BinEdi
+namespace Binedi
 {
     public partial class Form1 : Form
     {
@@ -61,7 +61,7 @@ namespace BinEdi
             hexBox1.ByteProvider = new DynamicByteProvider(File.ReadAllBytes(o.FileName));
             hexBox1.ByteCharConverter = new ByteCharConveter("shift_jis");
 
-            Text = "BinEdi ~~ by pleonex       " + Path.GetFileName(o.FileName);
+            Text = "Binedi ~~ by pleonex       " + Path.GetFileName(o.FileName);
             Activate();
 
             txtError.Text += sb + "\n";

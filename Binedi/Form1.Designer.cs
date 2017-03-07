@@ -22,7 +22,7 @@
 // <email>benito356@gmail.com</email>
 // <date>04/06/2012 18:59:19</date>
 // -----------------------------------------------------------------------
-namespace BinEdi
+namespace Binedi
 {
     partial class Form1
     {
@@ -358,7 +358,7 @@ namespace BinEdi
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "Form1";
-            this.Text = "BinEdi ~~ by pleonex";
+            this.Text = "Binedi ~~ by pleonex";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupEntry.ResumeLayout(false);
             this.groupEntry.PerformLayout();
