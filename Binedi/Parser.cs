@@ -131,6 +131,10 @@ namespace Binedi
             string text = "";
             do
             {
+                // Skip all the null bytes for padding
+                while (pos < data.Length && data[pos] == 0x00)
+                    pos++;
+
                 try { text = Add_TextEntry(ref pos); }
                 catch (Exception ex) { Console.WriteLine(ex.Message); break; }
 
