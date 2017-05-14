@@ -1,5 +1,5 @@
 ﻿// ----------------------------------------------------------------------
-// <copyright file="Form1.cs" company="none">
+// <copyright file="MainForm.cs" company="none">
 // Copyright (C) 2012
 //
 //   This program is free software: you can redistribute it and/or modify
@@ -18,7 +18,6 @@
 // </copyright>
 // <author>pleoNeX</author>
 // <email>benito356@gmail.com</email>
-// <date>04/06/2012 18:59:05</date>
 // -----------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
@@ -30,18 +29,13 @@ using System.IO;
 
 namespace Binedi
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
-        Parser p;
-        StringBuilder sb;
+        Parser parser;
 
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
-
-            sb = new StringBuilder();
-            TextWriter tw = new StringWriter(sb);
-            Console.SetOut(tw);
         }
 
         void Form1_Load(object sender, EventArgs e)
@@ -56,21 +50,18 @@ namespace Binedi
             }
 
             string replaceXML = Application.StartupPath + Path.DirectorySeparatorChar + "replace.xml";
-            p = new Parser(o.FileName, replaceXML);
+            parser = new Parser(o.FileName, replaceXML);
 
             hexBox1.ByteProvider = new DynamicByteProvider(File.ReadAllBytes(o.FileName));
             hexBox1.ByteCharConverter = new ByteCharConveter("shift_jis");
 
-            Text = "Binedi ~~ by pleonex       " + Path.GetFileName(o.FileName);
+            Text = "[" + Path.GetFileName(o.FileName) + "] -- Binedi by pleonex";
             Activate();
-
-            txtError.Text += sb + "\n";
-            sb.Length = 0;
         }
 
         void UpdateXML()
         {
-            XmlElement root = p.MainNode;
+            XmlElement root = parser.MainNode;
             treeXml.Nodes.Clear();
 
             treeXml.BeginUpdate();
@@ -107,7 +98,7 @@ namespace Binedi
             if (o.ShowDialog() != DialogResult.OK)
                 return;
 
-            p.Load_XML(o.FileName);
+            parser.Load_XML(o.FileName);
 
             btnOpenXML.Enabled = false;
             btnNewXML.Enabled = false;
@@ -120,14 +111,11 @@ namespace Binedi
             numBlockOffset.Enabled = true;
 
             UpdateXML();
-
-            txtError.Text += sb + "\n";
-            sb.Length = 0;
         }
 
         void btnNewXML_Click(object sender, EventArgs e)
         {
-            p.Create_XML();
+            parser.Create_XML();
 
             btnOpenXML.Enabled = false;
             btnNewXML.Enabled = false;
@@ -138,9 +126,6 @@ namespace Binedi
             btnAddBlock.Enabled = true;
             btnTextSearch.Enabled = true;
             numBlockOffset.Enabled = true;
-
-            txtError.Text += sb + "\n";
-            sb.Length = 0;
         }
 
         void btnWriteXML_Click(object sender, EventArgs e)
@@ -153,12 +138,9 @@ namespace Binedi
             if (o.ShowDialog() != DialogResult.OK)
                 return;
 
-            p.WriteXML(o.FileName);
+            parser.WriteXML(o.FileName);
 
             o = null;
-
-            txtError.Text += sb + "\n";
-            sb.Length = 0;
         }
 
         void btnWriteBin_Click(object sender, EventArgs e)
@@ -167,44 +149,32 @@ namespace Binedi
             if (o.ShowDialog() != DialogResult.OK)
                 return;
 
-            p.ApplyChange();
-            p.WriteBIN(o.FileName);
+            parser.ApplyChange();
+            parser.WriteBIN(o.FileName);
 
             o = null;
-
-            txtError.Text += sb + "\n";
-            sb.Length = 0;
         }
 
         void btnAddBlock_Click(object sender, EventArgs e)
         {
-            p.Add_Block(txtBlockName.Text);
+            parser.Add_Block(txtBlockName.Text);
             UpdateXML();
-
-            txtError.Text += sb + "\n";
-            sb.Length = 0;
         }
 
         void btnTextSearch_Click(object sender, EventArgs e)
         {
             int pos = (int)numBlockOffset.Value;
-            p.Add_BlockText(txtBlockName.Text, ref pos);
+            parser.Add_BlockText(txtBlockName.Text, ref pos);
             UpdateXML();
 
             numBlockOffset.Value = pos;
             hexBox1.SelectionStart = pos;
-
-            txtError.Text += sb + "\n";
-            sb.Length = 0;
         }
 
         void btnAddEntry_Click(object sender, EventArgs e)
         {
-            p.Add_TextEntry((int)numNewOffset.Value, (int)numNewSize.Value);
+            parser.Add_TextEntry((int)numNewOffset.Value, (int)numNewSize.Value);
             UpdateXML();
-
-            txtError.Text += sb + "\n";
-            sb.Length = 0;
         }
 
 
@@ -218,7 +188,7 @@ namespace Binedi
             int b = Convert.ToInt32(tag.Split(new char[] { ',' })[0]);
             int el = Convert.ToInt32(tag.Split(new char[] { ',' })[1]);
 
-            txt.Text = p.Get_Text(b, el).Replace("\n", "\r\n");
+            txt.Text = parser.Get_Text(b, el).Replace("\n", "\r\n");
         }
 
         void btnReboot_Click(object sender, EventArgs e)
@@ -235,8 +205,8 @@ namespace Binedi
 
     public class ByteCharConveter : IByteCharConverter
     {
-        Encoding encoding;
-        List<byte> requeridedChar;
+        readonly Encoding encoding;
+        readonly List<byte> requeridedChar;
 
         public ByteCharConveter(string encoding)
         {

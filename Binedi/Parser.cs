@@ -20,7 +20,6 @@
 
 // <author>pleoNeX</author>
 // <email>benito356@gmail.com</email>
-// <date>04/06/2012 19:06:46</date>
 // -----------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
@@ -34,16 +33,17 @@ namespace Binedi
     public class Parser
     {
         Encoding enc;
-        string log = null;
+        string log;
         XmlElement replace;
 
         // Bin variables
         byte[] data;
 
         // XML variables
-        bool xmlLoaded = false;
+        bool xmlLoaded;
         XmlDocument doc;
-        XmlElement root, block;
+        XmlElement root;
+        XmlElement block;
 
         public Parser(string binPath, string replaceXML)
         {
@@ -51,7 +51,7 @@ namespace Binedi
             data = File.ReadAllBytes(binPath);
             doc = new XmlDocument();
 
-            if (replaceXML != "" && replaceXML is string && File.Exists(replaceXML))
+            if (!string.IsNullOrEmpty(replaceXML) && File.Exists(replaceXML))
             {
                 XmlDocument rdoc = new XmlDocument();
                 try { rdoc.Load(replaceXML); }
@@ -66,9 +66,10 @@ namespace Binedi
             root = doc.CreateElement("Binedi");
             xmlLoaded = true;
         }
+
         public void Load_XML(string path)
         {
-            if (path == "" || path == null)
+            if (string.IsNullOrEmpty(path))
                 return;
 
             doc.Load(path);
@@ -89,6 +90,7 @@ namespace Binedi
             block.AppendChild(e);
             return e.InnerText;
         }
+
         public string Add_TextEntry(ref int offset)
         {
             if (!xmlLoaded || block == null || offset >= data.Length)
@@ -114,13 +116,14 @@ namespace Binedi
             if (!xmlLoaded)
                 return;
 
-            if (name == "" || name == null)
+            if (string.IsNullOrEmpty(name))
                 name = "Block" + root.ChildNodes.Count.ToString();
             name = name.Replace(" ", "");
 
             block = doc.CreateElement(name);
             root.AppendChild(block);
         }
+
         public void Add_BlockText(string name, ref int pos)
         {
             if (!xmlLoaded)
@@ -192,6 +195,7 @@ namespace Binedi
         {
             File.WriteAllBytes(fileOut, data);
         }
+
         public void WriteXML(string fileOut)
         {
             doc.RemoveAll();
@@ -200,14 +204,15 @@ namespace Binedi
             doc.Save(fileOut);
         }
 
-        private String Read_String(int pos, int size)
+        string Read_String(int pos, int size)
         {
-            string text = new String(enc.GetChars(data, pos, size));
+            string text = new string(enc.GetChars(data, pos, size));
             text = Format(text);
 
             return text;
         }
-        private String Read_String(ref int pos)
+
+        string Read_String(ref int pos)
         {
             string text = "";
             List<byte> code = new List<byte>();
@@ -235,12 +240,12 @@ namespace Binedi
                     throw new FormatException("Wrong end pointer!\n0x " + pos.ToString("x"));
             }
 
-            text = new String(enc.GetChars(code.ToArray()));
+            text = new string(enc.GetChars(code.ToArray()));
             text = Format(text);
             return text;
         }
 
-        private void Write_String(int pos, int size, string text)
+        void Write_String(int pos, int size, string text)
         {
             string original = (string)text.Clone();
             text = Reformat(text);
@@ -266,9 +271,9 @@ namespace Binedi
             }
         }
 
-        private String Reformat(string text)
+        string Reformat(string text)
         {
-            if (text == "" || text == null)
+            if (string.IsNullOrEmpty(text))
                 return text;
 
             text = text.Replace("\r", "");
@@ -284,9 +289,10 @@ namespace Binedi
 
             return text;
         }
-        private String Format(string text)
+
+        string Format(string text)
         {
-            if (text == "" || text == null)
+            if (string.IsNullOrEmpty(text))
                 return text;
 
             text = text.Replace("\n", "\n      ");
@@ -306,6 +312,7 @@ namespace Binedi
         {
             get { return root; }
         }
+
         public string Log
         {
             set { log = value; }
