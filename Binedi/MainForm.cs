@@ -109,6 +109,7 @@ namespace Binedi
             btnAddBlock.Enabled = true;
             btnTextSearch.Enabled = true;
             numBlockOffset.Enabled = true;
+            auto_Entry.Enabled = true;
 
             UpdateXML();
         }
@@ -126,6 +127,7 @@ namespace Binedi
             btnAddBlock.Enabled = true;
             btnTextSearch.Enabled = true;
             numBlockOffset.Enabled = true;
+            auto_Entry.Enabled = true;
         }
 
         void btnWriteXML_Click(object sender, EventArgs e)
@@ -200,6 +202,12 @@ namespace Binedi
         {
             label6.Text = "Selected byte: 0x" + hexBox1.SelectionStart.ToString("x");
             numBlockOffset.Value = hexBox1.SelectionStart;
+        }
+
+        private void auto_Entry_Click(object sender, EventArgs e)
+        {
+            parser.Add_TextEntry((int)hexBox1.SelectionStart, (int)hexBox1.SelectionLength, true);
+            UpdateXML();
         }
     }
 

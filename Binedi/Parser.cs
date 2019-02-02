@@ -27,6 +27,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Xml;
+using System.Text.RegularExpressions;
 
 namespace Binedi
 {
@@ -54,7 +55,7 @@ namespace Binedi
             if (!string.IsNullOrEmpty(replaceXML) && File.Exists(replaceXML))
             {
                 XmlDocument rdoc = new XmlDocument();
-                try { rdoc.Load(replaceXML); }
+                try {rdoc.Load(replaceXML); }
                 catch (Exception ex) { System.Windows.Forms.MessageBox.Show(ex.Message + '\n' + ex.StackTrace); }
                 replace = (XmlElement)rdoc.ChildNodes[1];
             }
@@ -75,7 +76,26 @@ namespace Binedi
             doc.Load(path);
             root = (XmlElement)doc.ChildNodes[1];
             xmlLoaded = true;
-        } 
+        }
+
+        public void Add_TextEntry(int offset, int size, bool auto)
+        {
+            int prevSize = 0;
+            if (!xmlLoaded || block == null || offset + size > data.Length)
+                return;
+            string[] text = Read_String(offset, size, true);
+            for(int i = 0; i < text.Count(); i++)
+            {
+                XmlElement e = doc.CreateElement("Text");
+                e.InnerText = text[i];
+                offset += prevSize;
+                e.SetAttribute("Offset", offset.ToString("x"));
+                prevSize = enc.GetByteCount(text[i]);
+                if (prevSize == 0) prevSize = 2;
+                e.SetAttribute("Size", prevSize.ToString());
+                block.AppendChild(e);
+            }
+        }
 
         public string Add_TextEntry(int offset, int size)
         {
@@ -204,6 +224,13 @@ namespace Binedi
             doc.Save(fileOut);
         }
 
+        string[] Read_String (int pos, int size, bool auto)
+        {
+            string text = new string(enc.GetChars(data, pos, size));
+            string[] text_array = Regex.Split(text, "(\0+)");
+            return text_array;
+        }
+
         string Read_String(int pos, int size)
         {
             string text = new string(enc.GetChars(data, pos, size));
@@ -248,10 +275,11 @@ namespace Binedi
         void Write_String(int pos, int size, string text)
         {
             string original = (string)text.Clone();
-            text = Reformat(text);
+            //text = Reformat(text); // Doesn't work!
             byte[] code = enc.GetBytes(text);
 
-            if (code.Length >= size)
+
+            if (code.Length > size)
             {
                 throw new AccessViolationException("The following string is bigger than the max bytes: " +
                     size.ToString() + " (" + code.Length.ToString() + ") " + 
